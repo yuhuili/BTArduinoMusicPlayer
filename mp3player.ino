@@ -53,9 +53,6 @@ SoftwareSerial btSerial(6, 7);
 
 int prevGPIO2 = HIGH;
 
-bool needToCheckStateChange = false;
-long previousMili = millis();
-long wait = 2000;
 
 void setup() {
   pinMode(13, OUTPUT);
@@ -131,64 +128,8 @@ String getBluetoothVersion () {
   return versionStr;
 }
 
-void loop() {/*
-  detectBluetoothChange();
-  if (needToCheckStateChange==true&&millis()+wait>previousMili) {
-    needToCheckStateChange=false;
-    detectBluetoothChangeHelper();
-  }*/
+void loop() {
   genie.DoEvents();
-}
-/*
-void detectBluetoothChange() {
-  int bluetoothInterruptState = digitalRead(8);
-  if (prevGPIO2==HIGH&&bluetoothInterruptState==LOW){ 
-    prevGPIO2=LOW;
-    digitalWrite(13,HIGH);
-  }
-  else if (prevGPIO2==LOW&&bluetoothInterruptState==HIGH) {
-    prevGPIO2=HIGH;
-    digitalWrite(13,LOW);
-  }
-}
-*/
-
-void detectBluetoothChange() {
-  int bluetoothInterruptState = digitalRead(8);
-  if (prevGPIO2==HIGH&&bluetoothInterruptState==LOW){ 
-    prevGPIO2=LOW;
-    digitalWrite(13,HIGH);
-  }
-  else if (prevGPIO2==LOW&&bluetoothInterruptState==HIGH) {
-    prevGPIO2=HIGH;
-    digitalWrite(13,LOW);
-    previousMili=millis();
-    needToCheckStateChange=true;
-    //detectBluetoothChangeHelper();
-  }
-}
-
-void detectBluetoothChangeHelper() {
-  btSerial.write("Q\r");
-  String btStateStr = "";
-  if (btSerial.available() > 0) {
-    while (btSerial.available() > 0){
-      int readByte = btSerial.read();
-      if (readByte==13) {
-        while (btSerial.available() > 0) {
-          btSerial.read();
-        }
-        break;
-      }
-      btStateStr+=char(readByte);
-    }
-    if (btStateStr!="?"&&btStateStr!="AOK"){
-      if (btStateStr=="0D0D") {
-        genie.WriteObject(GENIE_OBJ_FORM, FORM_BLUETOOTH_INCOMING, 0);
-      }
-    }
-
-  }
 }
 
 void myGenieEventHandler() {
