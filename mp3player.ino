@@ -99,7 +99,7 @@ void boot() {
 String getBluetoothVersion () {
   btSerial.write("V\r");
   String versionStr = "";
-  delay(500); 
+  delay(500);
   if (btSerial.available() > 0) {
 
     while (btSerial.available() > 0){
